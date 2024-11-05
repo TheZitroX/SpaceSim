@@ -36,6 +36,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive  # Ensure submodules are checked out
 
     - name: Set reusable strings
       id: strings
@@ -58,4 +60,3 @@ jobs:
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
-
