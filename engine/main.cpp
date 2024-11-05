@@ -5,6 +5,7 @@
 
 int main() {
     ssWindow window;
+    window.run();
 
     return 0;
 }

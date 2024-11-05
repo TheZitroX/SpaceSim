@@ -9,11 +9,19 @@
 class ssWindow {
 public:
     ssWindow();
+
     ~ssWindow();
+
+    void run();
 
 private:
     bool m_isFullscreen = false;
+    bool m_running = false;
 
-    SDL_Window* m_windowPtr{};
-    SDL_Renderer* m_rendererPtr{};
+    SDL_Window *m_windowPtr{};
+    SDL_Renderer *m_rendererPtr{};
+
+    void draw();
+
+    void update();
 };
