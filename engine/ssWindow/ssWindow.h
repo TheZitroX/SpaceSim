@@ -5,6 +5,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <thread>
 
 class ssWindow {
 public:
@@ -22,6 +23,13 @@ private:
     SDL_Renderer *m_rendererPtr{};
 
     void draw();
+    void runRenderLoop();
+    std::thread m_renderThread;
 
     void update();
+
+    void handleSDLEvents();
+    void handleSDLKeyDown(const SDL_KeyboardEvent &key);
+
+
 };
