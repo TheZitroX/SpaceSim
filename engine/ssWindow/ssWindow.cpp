@@ -57,6 +57,8 @@ void ssWindow::run() {
     while (m_running) {
         handleSDLEvents();
         update();
+        // todo delete
+        SDL_Delay(16);
     }
 }
 
@@ -74,6 +76,9 @@ void ssWindow::draw() {
     drawFPS();
 
     SDL_RenderPresent(m_rendererPtr);
+
+    // todo delete
+    SDL_Delay(16);
 }
 
 void ssWindow::update() {
