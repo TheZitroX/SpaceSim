@@ -48,4 +48,6 @@ private:
     void handleSDLMouseMotion(const SDL_MouseMotionEvent &motion);
 
     void drawMouseMotion();
+
+    void drawFPS();
 };
