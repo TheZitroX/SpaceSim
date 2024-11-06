@@ -58,11 +58,13 @@ void ssWindow::draw() {
     SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_RenderClear(m_rendererPtr);
 
-    SDL_FRect rect = { 100, 100, 100, 100 };
+    SDL_FRect rect = {100, 100, 100, 100};
     SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
     SDL_RenderFillRect(m_rendererPtr, &rect);
 
-    
+    drawMouseMotion();
+
+    drawFPS();
 
     SDL_RenderPresent(m_rendererPtr);
 }
@@ -81,6 +83,15 @@ void ssWindow::handleSDLEvents() {
                 break;
             case SDL_EVENT_KEY_DOWN:
                 handleSDLKeyDown(event.key);
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                m_mouseMotionActive = true;
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                m_mouseMotionActive = false;
+                break;
+            case SDL_EVENT_MOUSE_MOTION:
+                handleSDLMouseMotion(event.motion);
                 break;
             default:
                 break;
@@ -105,5 +116,39 @@ void ssWindow::handleSDLKeyDown(const SDL_KeyboardEvent &key) {
 void ssWindow::runRenderLoop() {
     while (m_running) {
         draw();
+    }
+}
+
+void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent &motion) {
+    std::lock_guard<std::mutex> lock(m_mouseMotionMutex);
+
+    if (!m_mouseMotionActive)
+        return;
+
+    m_mouseMotion.velocity = {motion.xrel, motion.yrel};
+    m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
+}
+
+void ssWindow::drawMouseMotion() {
+    std::lock_guard<std::mutex> lock(m_mouseMotionMutex);
+
+    if (m_mouseMotion.vecPoints.empty())
+        return;
+
+    SDL_SetRenderDrawColor(m_rendererPtr, 255, 255, 255, 255);
+    SDL_RenderPoints(m_rendererPtr, m_mouseMotion.vecPoints.data(), m_mouseMotion.vecPoints.size());
+
+    // Draw velocity vector
+    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 0, 255);
+    const auto success = SDL_RenderLine(
+            m_rendererPtr,
+            m_mouseMotion.vecPoints.back().x,
+            m_mouseMotion.vecPoints.back().y,
+            m_mouseMotion.vecPoints.back().x + m_mouseMotion.velocity.x,
+            m_mouseMotion.vecPoints.back().y + m_mouseMotion.velocity.y
+    );
+    if (!success) {
+        std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
+        SDL_ClearError();
     }
 }

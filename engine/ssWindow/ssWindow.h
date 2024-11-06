@@ -6,6 +6,7 @@
 
 #include <SDL3/SDL.h>
 #include <thread>
+#include <vector>
 
 class ssWindow {
 public:
@@ -17,10 +18,22 @@ public:
 
 private:
     bool m_isFullscreen = false;
-    bool m_running = false;
+    std::atomic<bool> m_running = false;
 
     SDL_Window *m_windowPtr{};
     SDL_Renderer *m_rendererPtr{};
+
+    struct Points {
+        float x;
+        float y;
+    };
+    struct MouseMotion {
+        SDL_FPoint velocity{};
+        std::vector<SDL_FPoint> vecPoints{};
+    };
+    MouseMotion m_mouseMotion;
+    std::mutex m_mouseMotionMutex;
+    std::atomic<bool> m_mouseMotionActive = false;
 
     void draw();
     void runRenderLoop();
@@ -32,4 +45,7 @@ private:
     void handleSDLKeyDown(const SDL_KeyboardEvent &key);
 
 
+    void handleSDLMouseMotion(const SDL_MouseMotionEvent &motion);
+
+    void drawMouseMotion();
 };
