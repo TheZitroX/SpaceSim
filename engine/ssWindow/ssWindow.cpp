@@ -17,8 +17,8 @@ ssWindow::ssWindow() {
     m_isFullscreen = false;
     m_windowPtr = SDL_CreateWindow(
             "Hello, SDL3!",
-            800,
-            600,
+            1280,
+            720,
             SDL_WINDOW_RESIZABLE
     );
     if (!m_windowPtr) {
@@ -34,6 +34,9 @@ ssWindow::ssWindow() {
 }
 
 ssWindow::~ssWindow() {
+    if (m_renderThread.joinable())
+        m_renderThread.join();
+
     SDL_DestroyRenderer(m_rendererPtr);
     SDL_DestroyWindow(m_windowPtr);
     SDL_Quit();
@@ -41,42 +44,66 @@ ssWindow::~ssWindow() {
 
 void ssWindow::run() {
     m_running = true;
+
+    m_renderThread = std::thread(&ssWindow::runRenderLoop, this);
+
     while (m_running) {
+        handleSDLEvents();
         update();
-        draw();
     }
 }
 
-int color_r = 0;
-int color_b = 0;
-int color_g = 0;
 
 void ssWindow::draw() {
-    SDL_SetRenderDrawColor(m_rendererPtr, color_r, color_b, color_g, 255);
+    SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_RenderClear(m_rendererPtr);
-    SDL_RenderPresent(m_rendererPtr);
 
-    color_r++;
-    color_b++;
-    color_g++;
-    if (color_r > 255) color_r = 0;
-    if (color_b > 255) color_b = 0;
-    if (color_g > 255) color_g = 0;
+    SDL_FRect rect = { 100, 100, 100, 100 };
+    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
+    SDL_RenderFillRect(m_rendererPtr, &rect);
+
+    
+
+    SDL_RenderPresent(m_rendererPtr);
 }
 
 void ssWindow::update() {
-    std::cout << "resolution: " << SDL_GetWindowSurface(m_windowPtr)->w << "x" << SDL_GetWindowSurface(m_windowPtr)->h
-              << std::endl;
+}
 
+void ssWindow::handleSDLEvents() {
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_EVENT_QUIT) {
-            m_running = false;
-        } else if (event.key.scancode == SDL_SCANCODE_F11) {
-            if (event.key.down) {
-                m_isFullscreen = !m_isFullscreen;
-                SDL_SetWindowFullscreen(m_windowPtr, m_isFullscreen);
-            }
+        const auto eventType = event.type;
+        switch (eventType) {
+            case SDL_EVENT_QUIT:
+                m_running = false;
+                break;
+            case SDL_EVENT_KEY_DOWN:
+                handleSDLKeyDown(event.key);
+                break;
+            default:
+                break;
         }
+    }
+}
+
+void ssWindow::handleSDLKeyDown(const SDL_KeyboardEvent &key) {
+    const auto keyType = key.scancode;
+    switch (keyType) {
+        case SDL_SCANCODE_ESCAPE:
+            m_running = false;
+            break;
+        case SDL_SCANCODE_F11:
+            m_isFullscreen = !m_isFullscreen;
+            SDL_SetWindowFullscreen(m_windowPtr, m_isFullscreen);
+        default:
+            break;
+    }
+}
+
+void ssWindow::runRenderLoop() {
+    while (m_running) {
+        draw();
     }
 }
