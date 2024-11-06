@@ -7,10 +7,16 @@
 #include <memory>
 #include <SDL3/SDL.h>
 #include <iostream>
+#include <SDL3_ttf/SDL_ttf.h>
 
 ssWindow::ssWindow() {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::cerr << "SDL_Init failed: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    if (!TTF_Init()) {
+        std::cerr << "TTF_Init failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
@@ -39,6 +45,7 @@ ssWindow::~ssWindow() {
 
     SDL_DestroyRenderer(m_rendererPtr);
     SDL_DestroyWindow(m_windowPtr);
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -58,9 +65,9 @@ void ssWindow::draw() {
     SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_RenderClear(m_rendererPtr);
 
-    SDL_FRect rect = {100, 100, 100, 100};
-    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
-    SDL_RenderFillRect(m_rendererPtr, &rect);
+//    SDL_FRect rect = {100, 100, 100, 100};
+//    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
+//    SDL_RenderFillRect(m_rendererPtr, &rect);
 
     drawMouseMotion();
 
@@ -151,4 +158,33 @@ void ssWindow::drawMouseMotion() {
         std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
         SDL_ClearError();
     }
+}
+
+void ssWindow::drawFPS() {
+    const auto text = const_cast<char*>("Hello World!");
+    const auto font = TTF_OpenFont("res/font/arial.ttf", 2000);
+    if (!font) {
+        std::cerr << "TTF_OpenFont failed: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    const SDL_Color color{255, 0, 255, 255};
+    const auto textSurface = TTF_RenderText_Solid(font, text, strlen(text), color);
+    if (!textSurface) {
+        std::cerr << "TTF_RenderText_Solid failed: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    const auto textTexture = SDL_CreateTextureFromSurface(m_rendererPtr, textSurface);
+    if (!textTexture) {
+        std::cerr << "SDL_CreateTextureFromSurface failed: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    // Draw text
+    SDL_RenderTexture(m_rendererPtr, textTexture, nullptr, nullptr);
+
+    SDL_DestroySurface(textSurface);
+    SDL_DestroyTexture(textTexture);
+    TTF_CloseFont(font);
 }
