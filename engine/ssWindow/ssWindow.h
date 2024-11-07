@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 #include "simulation/ssSimulationWorld.h"
+#include "simulation/ssSWDebugDraw.h"
 
 class ssWindow {
 public:
@@ -53,6 +54,4 @@ private:
     void drawFPS();
 
     ssSimulationWorld m_simulationWorld{};
-
-    void drawWorld();
 };

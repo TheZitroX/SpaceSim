@@ -37,6 +37,8 @@ ssWindow::ssWindow() {
         std::cerr << "SDL_CreateRenderer failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
+
+    m_simulationWorld.setRenderer(m_rendererPtr);
 }
 
 ssWindow::~ssWindow() {
@@ -52,11 +54,17 @@ ssWindow::~ssWindow() {
 void ssWindow::run() {
     m_running = true;
 
+//#define USE_MULTITHREADING
+#ifdef USE_MULTITHREADING
     m_renderThread = std::thread(&ssWindow::runRenderLoop, this);
+#endif
 
     while (m_running) {
         handleSDLEvents();
         update();
+#ifndef USE_MULTITHREADING
+        draw();
+#endif
     }
 }
 
@@ -73,7 +81,7 @@ void ssWindow::draw() {
 
     drawFPS();
 
-    drawWorld();
+    m_simulationWorld.debugDraw();
 
     SDL_RenderPresent(m_rendererPtr);
 }
@@ -167,7 +175,7 @@ void ssWindow::drawMouseMotion() {
 }
 
 void ssWindow::drawFPS() {
-    const auto text = const_cast<char*>("Hello World!");
+    const auto text = const_cast<char *>("Hello World!");
     const auto font = TTF_OpenFont("res/font/arial.ttf", 2000);
     if (!font) {
         std::cerr << "TTF_OpenFont failed: " << SDL_GetError() << std::endl;
@@ -193,10 +201,4 @@ void ssWindow::drawFPS() {
     SDL_DestroySurface(textSurface);
     SDL_DestroyTexture(textTexture);
     TTF_CloseFont(font);
-}
-
-void ssWindow::drawWorld() {
-    SDL_SetRenderDrawColor(m_rendererPtr, 255, 255, 255, 255);
-    const auto bodyPosition = m_simulationWorld.getPosition();
-    SDL_RenderPoint(m_rendererPtr, bodyPosition.x, bodyPosition.y);
 }
