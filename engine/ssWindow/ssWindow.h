@@ -7,6 +7,7 @@
 #include <SDL3/SDL.h>
 #include <thread>
 #include <vector>
+#include "simulation/ssSimulationWorld.h"
 
 class ssWindow {
 public:
@@ -50,4 +51,8 @@ private:
     void drawMouseMotion();
 
     void drawFPS();
+
+    ssSimulationWorld m_simulationWorld{};
+
+    void drawWorld();
 };

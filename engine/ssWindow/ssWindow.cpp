@@ -57,8 +57,6 @@ void ssWindow::run() {
     while (m_running) {
         handleSDLEvents();
         update();
-        // todo delete
-        SDL_Delay(16);
     }
 }
 
@@ -75,13 +73,16 @@ void ssWindow::draw() {
 
     drawFPS();
 
-    SDL_RenderPresent(m_rendererPtr);
+    drawWorld();
 
-    // todo delete
-    SDL_Delay(16);
+    SDL_RenderPresent(m_rendererPtr);
 }
 
 void ssWindow::update() {
+    m_simulationWorld.step(1.0f / 60.0f, 1);
+
+    // todo implement float deltaTime
+    SDL_Delay(16);
 }
 
 void ssWindow::handleSDLEvents() {
@@ -192,4 +193,10 @@ void ssWindow::drawFPS() {
     SDL_DestroySurface(textSurface);
     SDL_DestroyTexture(textTexture);
     TTF_CloseFont(font);
+}
+
+void ssWindow::drawWorld() {
+    SDL_SetRenderDrawColor(m_rendererPtr, 255, 255, 255, 255);
+    const auto bodyPosition = m_simulationWorld.getPosition();
+    SDL_RenderPoint(m_rendererPtr, bodyPosition.x, bodyPosition.y);
 }

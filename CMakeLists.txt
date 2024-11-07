@@ -4,6 +4,7 @@ project(SpaceSim)
 
 add_subdirectory(vendor/SDL)
 add_subdirectory(vendor/SDL_ttf)
+add_subdirectory(vendor/box2d)
 
 add_subdirectory(base)
 add_subdirectory(engine)
