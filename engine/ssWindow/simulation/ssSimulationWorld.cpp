@@ -13,7 +13,7 @@ ssSimulationWorld::ssSimulationWorld() {
     m_worldId = b2CreateWorld(&worldDefinition);
 
     auto groundBodyDefinition = b2DefaultBodyDef();
-    groundBodyDefinition.position = b2Vec2(0, -1000);
+    groundBodyDefinition.position = b2Vec2(0, 100);
 
     const auto groundId = b2CreateBody(m_worldId, &groundBodyDefinition);
     const auto groundBox = b2MakeBox(50.0f, 10.0f);
@@ -23,10 +23,10 @@ ssSimulationWorld::ssSimulationWorld() {
 
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position = (b2Vec2){0.0f, 0.0f};
+    bodyDef.position = (b2Vec2) {0.0f, 0.0f};
     m_bodyId = b2CreateBody(m_worldId, &bodyDef);
 
-    b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
+    b2Polygon dynamicBox = b2MakeBox(10.0f, 10.0f);
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 0.01f;
     shapeDef.friction = 0.3f;
@@ -39,6 +39,13 @@ ssSimulationWorld::~ssSimulationWorld() {
 
 void ssSimulationWorld::step(const float timeStep, const int subStepCount) {
     b2World_Step(m_worldId, timeStep, subStepCount);
-    std::cout << "Position: " << getPosition().x << ", " << getPosition().y << std::endl;
 }
 
+void ssSimulationWorld::setRenderer(SDL_Renderer *rendererPtr) {
+    m_rendererPtr = rendererPtr;
+    m_debugDraw = ssSWDebugDraw(m_rendererPtr, 1.0f);
+}
+
+void ssSimulationWorld::debugDraw() {
+    b2World_Draw(m_worldId, &m_debugDraw);
+}

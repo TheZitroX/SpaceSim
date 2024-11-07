@@ -5,18 +5,24 @@
 #pragma once
 
 #include <box2d/box2d.h>
+#include "ssSWDebugDraw.h"
 
 class ssSimulationWorld {
 public:
-    ssSimulationWorld();
+    explicit ssSimulationWorld();
 
     ~ssSimulationWorld();
 
     void step(float timeStep, int subStepCount);
 
-    inline b2Vec2 getPosition() const { return b2Body_GetPosition(m_bodyId); }
+    void setRenderer(SDL_Renderer *rendererPtr);
+
+    void debugDraw();
 
 private:
     b2WorldId m_worldId{};
-    b2BodyId m_bodyId;
+    b2BodyId m_bodyId{};
+
+    SDL_Renderer *m_rendererPtr{};
+    ssSWDebugDraw m_debugDraw{};
 };
