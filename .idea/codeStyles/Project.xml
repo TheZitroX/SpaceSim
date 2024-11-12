@@ -2,10 +2,7 @@
   <code_scheme name="Project" version="173">
     <option name="AUTODETECT_INDENTS" value="false" />
     <Objective-C>
-      <option name="INDENT_NAMESPACE_MEMBERS" value="2" />
-      <option name="INDENT_C_STRUCT_MEMBERS" value="2" />
-      <option name="INDENT_VISIBILITY_KEYWORDS" value="2" />
-      <option name="INDENT_INSIDE_CODE_BLOCK" value="2" />
+      <option name="INDENT_PREPROCESSOR_DIRECTIVE" value="4" />
       <option name="NAMESPACE_BRACE_PLACEMENT" value="2" />
       <option name="FUNCTION_BRACE_PLACEMENT" value="5" />
       <option name="BLOCK_BRACE_PLACEMENT" value="5" />
@@ -23,9 +20,6 @@
       <option name="DISCHARGED_SHORT_TERNARY_OPERATOR" value="true" />
       <option name="INTRODUCE_CONST_PARAMS" value="true" />
     </Objective-C>
-    <clangFormatSettings>
-      <option name="ENABLED" value="true" />
-    </clangFormatSettings>
     <files>
       <extensions>
         <pair source="cpp" header="h" fileNamingConvention="NONE" />
@@ -33,6 +27,7 @@
       </extensions>
     </files>
     <codeStyleSettings language="ObjectiveC">
+      <option name="RIGHT_MARGIN" value="120" />
       <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
       <option name="BLANK_LINES_AROUND_CLASS" value="0" />
       <option name="BLANK_LINES_AROUND_METHOD_IN_INTERFACE" value="0" />
@@ -44,9 +39,7 @@
       <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
       <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
       <indentOptions>
-        <option name="INDENT_SIZE" value="2" />
-        <option name="CONTINUATION_INDENT_SIZE" value="2" />
-        <option name="TAB_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="SMART_TABS" value="true" />
       </indentOptions>
     </codeStyleSettings>

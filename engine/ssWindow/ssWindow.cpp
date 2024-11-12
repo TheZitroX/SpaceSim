@@ -9,31 +9,36 @@
 #include <iostream>
 #include <SDL3_ttf/SDL_ttf.h>
 
-ssWindow::ssWindow() {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
+ssWindow::ssWindow()
+{
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
         std::cerr << "SDL_Init failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
-    if (!TTF_Init()) {
+    if (!TTF_Init())
+    {
         std::cerr << "TTF_Init failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
     m_isFullscreen = false;
-    m_windowPtr = SDL_CreateWindow(
-            "Hello, SDL3!",
-            1280,
-            720,
-            SDL_WINDOW_RESIZABLE
+    m_windowPtr    = SDL_CreateWindow(
+        "Hello, SDL3!",
+        1280,
+        720,
+        SDL_WINDOW_RESIZABLE
     );
-    if (!m_windowPtr) {
+    if (!m_windowPtr)
+    {
         std::cerr << "SDL_CreateWindow failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
     m_rendererPtr = SDL_CreateRenderer(m_windowPtr, nullptr);
-    if (!m_rendererPtr) {
+    if (!m_rendererPtr)
+    {
         std::cerr << "SDL_CreateRenderer failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
@@ -41,7 +46,8 @@ ssWindow::ssWindow() {
     m_simulationWorld.setRenderer(m_rendererPtr);
 }
 
-ssWindow::~ssWindow() {
+ssWindow::~ssWindow()
+{
     if (m_renderThread.joinable())
         m_renderThread.join();
 
@@ -51,7 +57,8 @@ ssWindow::~ssWindow() {
     SDL_Quit();
 }
 
-void ssWindow::run() {
+void ssWindow::run()
+{
     m_running = true;
 
 //#define USE_MULTITHREADING
@@ -59,7 +66,8 @@ void ssWindow::run() {
     m_renderThread = std::thread(&ssWindow::runRenderLoop, this);
 #endif
 
-    while (m_running) {
+    while (m_running)
+    {
         handleSDLEvents();
         update();
 #ifndef USE_MULTITHREADING
@@ -69,7 +77,8 @@ void ssWindow::run() {
 }
 
 
-void ssWindow::draw() {
+void ssWindow::draw()
+{
     SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_RenderClear(m_rendererPtr);
 
@@ -86,19 +95,23 @@ void ssWindow::draw() {
     SDL_RenderPresent(m_rendererPtr);
 }
 
-void ssWindow::update() {
+void ssWindow::update()
+{
     m_simulationWorld.step(1.0f / 60.0f, 1);
 
     // todo implement float deltaTime
     SDL_Delay(16);
 }
 
-void ssWindow::handleSDLEvents() {
+void ssWindow::handleSDLEvents()
+{
     SDL_Event event;
 
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event))
+    {
         const auto eventType = event.type;
-        switch (eventType) {
+        switch (eventType)
+        {
             case SDL_EVENT_QUIT:
                 m_running = false;
                 break;
@@ -120,9 +133,11 @@ void ssWindow::handleSDLEvents() {
     }
 }
 
-void ssWindow::handleSDLKeyDown(const SDL_KeyboardEvent &key) {
+void ssWindow::handleSDLKeyDown(const SDL_KeyboardEvent& key)
+{
     const auto keyType = key.scancode;
-    switch (keyType) {
+    switch (keyType)
+    {
         case SDL_SCANCODE_ESCAPE:
             m_running = false;
             break;
@@ -134,13 +149,16 @@ void ssWindow::handleSDLKeyDown(const SDL_KeyboardEvent &key) {
     }
 }
 
-void ssWindow::runRenderLoop() {
-    while (m_running) {
+void ssWindow::runRenderLoop()
+{
+    while (m_running)
+    {
         draw();
     }
 }
 
-void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent &motion) {
+void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
+{
     std::lock_guard<std::mutex> lock(m_mouseMotionMutex);
 
     if (!m_mouseMotionActive)
@@ -150,7 +168,8 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent &motion) {
     m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
 }
 
-void ssWindow::drawMouseMotion() {
+void ssWindow::drawMouseMotion()
+{
     std::lock_guard<std::mutex> lock(m_mouseMotionMutex);
 
     if (m_mouseMotion.vecPoints.empty())
@@ -162,35 +181,40 @@ void ssWindow::drawMouseMotion() {
     // Draw velocity vector
     SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 0, 255);
     const auto success = SDL_RenderLine(
-            m_rendererPtr,
-            m_mouseMotion.vecPoints.back().x,
-            m_mouseMotion.vecPoints.back().y,
-            m_mouseMotion.vecPoints.back().x + m_mouseMotion.velocity.x,
-            m_mouseMotion.vecPoints.back().y + m_mouseMotion.velocity.y
+        m_rendererPtr,
+        m_mouseMotion.vecPoints.back().x,
+        m_mouseMotion.vecPoints.back().y,
+        m_mouseMotion.vecPoints.back().x + m_mouseMotion.velocity.x,
+        m_mouseMotion.vecPoints.back().y + m_mouseMotion.velocity.y
     );
-    if (!success) {
+    if (!success)
+    {
         std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
         SDL_ClearError();
     }
 }
 
-void ssWindow::drawFPS() {
-    const auto text = const_cast<char *>("Hello World!");
+void ssWindow::drawFPS()
+{
+    const auto text = const_cast<char*>("Hello World!");
     const auto font = TTF_OpenFont("res/font/arial.ttf", 2000);
-    if (!font) {
+    if (!font)
+    {
         std::cerr << "TTF_OpenFont failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
     const SDL_Color color{255, 0, 255, 255};
-    const auto textSurface = TTF_RenderText_Solid(font, text, strlen(text), color);
-    if (!textSurface) {
+    const auto      textSurface = TTF_RenderText_Solid(font, text, strlen(text), color);
+    if (!textSurface)
+    {
         std::cerr << "TTF_RenderText_Solid failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
     const auto textTexture = SDL_CreateTextureFromSurface(m_rendererPtr, textSurface);
-    if (!textTexture) {
+    if (!textTexture)
+    {
         std::cerr << "SDL_CreateTextureFromSurface failed: " << SDL_GetError() << std::endl;
         exit(1);
     }

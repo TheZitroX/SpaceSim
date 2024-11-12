@@ -10,7 +10,8 @@
 #include "simulation/ssSimulationWorld.h"
 #include "simulation/ssSWDebugDraw.h"
 
-class ssWindow {
+class ssWindow
+{
 public:
     ssWindow();
 
@@ -19,35 +20,37 @@ public:
     void run();
 
 private:
-    bool m_isFullscreen = false;
-    std::atomic<bool> m_running = false;
+    bool              m_isFullscreen = false;
+    std::atomic<bool> m_running      = false;
 
-    SDL_Window *m_windowPtr{};
-    SDL_Renderer *m_rendererPtr{};
+    SDL_Window        * m_windowPtr{};
+    SDL_Renderer      * m_rendererPtr{};
 
-    struct Points {
+    struct Points
+    {
         float x;
         float y;
     };
-    struct MouseMotion {
-        SDL_FPoint velocity{};
+    struct MouseMotion
+    {
+        SDL_FPoint              velocity{};
         std::vector<SDL_FPoint> vecPoints{};
     };
-    MouseMotion m_mouseMotion;
-    std::mutex m_mouseMotionMutex;
+    MouseMotion       m_mouseMotion;
+    std::mutex        m_mouseMotionMutex;
     std::atomic<bool> m_mouseMotionActive = false;
 
     void draw();
     void runRenderLoop();
-    std::thread m_renderThread;
+    std::thread       m_renderThread;
 
     void update();
 
     void handleSDLEvents();
-    void handleSDLKeyDown(const SDL_KeyboardEvent &key);
+    void handleSDLKeyDown(const SDL_KeyboardEvent& key);
 
 
-    void handleSDLMouseMotion(const SDL_MouseMotionEvent &motion);
+    void handleSDLMouseMotion(const SDL_MouseMotionEvent& motion);
 
     void drawMouseMotion();
 

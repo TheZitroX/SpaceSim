@@ -3,7 +3,8 @@
 #include <iostream>
 #include "ssWindow/ssWindow.h"
 
-int main() {
+int main()
+{
     ssWindow window;
     window.run();
 

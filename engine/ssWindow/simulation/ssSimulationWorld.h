@@ -7,7 +7,8 @@
 #include <box2d/box2d.h>
 #include "ssSWDebugDraw.h"
 
-class ssSimulationWorld {
+class ssSimulationWorld
+{
 public:
     explicit ssSimulationWorld();
 
@@ -15,14 +16,14 @@ public:
 
     void step(float timeStep, int subStepCount);
 
-    void setRenderer(SDL_Renderer *rendererPtr);
+    void setRenderer(SDL_Renderer* rendererPtr);
 
     void debugDraw();
 
 private:
     b2WorldId m_worldId{};
-    b2BodyId m_bodyId{};
+    b2BodyId  m_bodyId{};
 
-    SDL_Renderer *m_rendererPtr{};
+    SDL_Renderer* m_rendererPtr{};
     ssSWDebugDraw m_debugDraw{};
 };
