@@ -2,7 +2,6 @@
 // Created by zitri on 07.11.2024.
 //
 
-#include <iostream>
 #include "ssSimulationWorld.h"
 
 constexpr float GRAVITY = 9.80665;
@@ -13,25 +12,29 @@ ssSimulationWorld::ssSimulationWorld()
     worldDefinition.gravity.y = GRAVITY;
     m_worldId = b2CreateWorld(&worldDefinition);
 
-    auto groundBodyDefinition = b2DefaultBodyDef();
-    groundBodyDefinition.position = b2Vec2(0, 100);
+    {
+        auto groundBodyDefinition = b2DefaultBodyDef();
+        groundBodyDefinition.position = b2Vec2(0, 100);
 
-    const auto groundId  = b2CreateBody(m_worldId, &groundBodyDefinition);
-    const auto groundBox = b2MakeBox(50.0f, 10.0f);
+        const auto groundId  = b2CreateBody(m_worldId, &groundBodyDefinition);
+        const auto groundBox = b2MakeBox(50.0f, 10.0f);
 
-    const auto groundShapeDef = b2DefaultShapeDef();
-    (void) b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+        const auto groundShapeDef = b2DefaultShapeDef();
+        auto       shapeId        = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+    }
 
-    b2BodyDef bodyDef = b2DefaultBodyDef();
-    bodyDef.type     = b2_dynamicBody;
-    bodyDef.position = (b2Vec2) {0.0f, 0.0f};
-    m_bodyId = b2CreateBody(m_worldId, &bodyDef);
+    {
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.type     = b2_dynamicBody;
+        bodyDef.position = (b2Vec2) {0.0f, 0.0f};
+        m_bodyId = b2CreateBody(m_worldId, &bodyDef);
 
-    b2Polygon  dynamicBox = b2MakeBox(10.0f, 10.0f);
-    b2ShapeDef shapeDef   = b2DefaultShapeDef();
-    shapeDef.density  = 0.01f;
-    shapeDef.friction = 0.3f;
-    b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
+        b2Polygon  dynamicBox = b2MakeBox(10.0f, 10.0f);
+        b2ShapeDef shapeDef   = b2DefaultShapeDef();
+        shapeDef.density  = 0.01f;
+        shapeDef.friction = 0.3f;
+        auto shapeID = b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
+    }
 }
 
 ssSimulationWorld::~ssSimulationWorld()
@@ -47,7 +50,7 @@ void ssSimulationWorld::step(const float timeStep, const int subStepCount)
 void ssSimulationWorld::setRenderer(SDL_Renderer* rendererPtr)
 {
     m_rendererPtr = rendererPtr;
-    m_debugDraw   = ssSWDebugDraw(m_rendererPtr, 1.0f);
+    m_debugDraw   = ssSWDebugDraw(rendererPtr, 1.0f);
 }
 
 void ssSimulationWorld::debugDraw()

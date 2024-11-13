@@ -6,16 +6,12 @@
 
 #include <iostream>
 #include <vector>
+#include <cassert>
 
-ssSWDebugDraw::ssSWDebugDraw(SDL_Renderer* pRenderer, const float MetersPerPixelFactor)
-    : b2DebugDraw(b2DefaultDebugDraw())
-    , m_pRenderer(pRenderer)
-    , m_MetersPerPixelFactor(MetersPerPixelFactor)
-{
-    this->drawShapes = true;
-    this->drawJoints = true;
-    this->drawAABBs  = true;
-}
+
+static SDL_Color ToSDLColor(const b2HexColor& color, const ssSWDebugDraw* pDraw);
+
+static b2Vec2 MeterToPixel(b2Vec2 rVector, const ssSWDebugDraw* self);
 
 SDL_FColor ToSDLFColor(const SDL_Color& color)
 {
@@ -27,21 +23,26 @@ SDL_FColor ToSDLFColor(const SDL_Color& color)
     };
 }
 
-void ssSWDebugDraw::DrawSolidPolygon(const b2Vec2* pVertices, int VertexCount, const b2HexColor& rColor)
+[[maybe_unused]] void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVertices, int VertexCount,
+                                                      float radius,
+                                                      b2HexColor rColor, void* context)
 {
-    const SDL_Color LineColor     = ToSDLColor(rColor);
-    SDL_FColor      TriangleColor = ToSDLFColor(ToSDLColor(rColor));
+    auto* self = static_cast<ssSWDebugDraw*>(context);
+    assert(self != nullptr);
+
+    const SDL_Color LineColor     = ToSDLColor(rColor, self);
+    SDL_FColor      TriangleColor = ToSDLFColor(ToSDLColor(rColor, self));
     TriangleColor.a = 128;
 
     std::vector<SDL_Vertex> vecVertices;
-    for (int32_t i = 0; i < VertexCount; ++i)
+    for (int32_t            i = 0; i < VertexCount; ++i)
     {
         if (i < (VertexCount - 2))
         {
             const b2Vec2 TriangleVertex[3] = {
-                MeterToPixel(pVertices[0 + 0]),
-                MeterToPixel(pVertices[i + 1]),
-                MeterToPixel(pVertices[i + 2]),
+                MeterToPixel(pVertices[0 + 0], self),
+                MeterToPixel(pVertices[i + 1], self),
+                MeterToPixel(pVertices[i + 2], self),
             };
 
             for (auto j: TriangleVertex)
@@ -52,13 +53,17 @@ void ssSWDebugDraw::DrawSolidPolygon(const b2Vec2* pVertices, int VertexCount, c
         }
     }
 
-    if (!SDL_RenderGeometry(m_pRenderer, nullptr, vecVertices.data(), (int32_t) vecVertices.size(), nullptr, 0))
+    auto renderer = self->getRenderer();
+    assert(renderer != nullptr);
+
+
+    if (!SDL_RenderGeometry(renderer, nullptr, vecVertices.data(), (int32_t) vecVertices.size(), nullptr, 0))
     {
         std::cerr << "SDL_RenderGeometry failed: " << SDL_GetError() << std::endl;
         SDL_ClearError();
     }
 
-    if (!SDL_SetRenderDrawColor(m_pRenderer, LineColor.r, LineColor.g, LineColor.b, LineColor.a))
+    if (!SDL_SetRenderDrawColor(renderer, LineColor.r, LineColor.g, LineColor.b, LineColor.a))
     {
         std::cerr << "SDL_SetRenderDrawColor failed: " << SDL_GetError() << std::endl;
         SDL_ClearError();
@@ -66,10 +71,10 @@ void ssSWDebugDraw::DrawSolidPolygon(const b2Vec2* pVertices, int VertexCount, c
 
     for (int32_t i = 0; i < VertexCount; ++i)
     {
-        const b2Vec2 LineStart = MeterToPixel(pVertices[i]);
-        const b2Vec2 LineEnd   = MeterToPixel(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0]);
+        const b2Vec2 LineStart = MeterToPixel(pVertices[i], self);
+        const b2Vec2 LineEnd   = MeterToPixel(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0], self);
 
-        if (!SDL_RenderLine(m_pRenderer, LineStart.x, LineStart.y, LineEnd.x, LineEnd.y))
+        if (!SDL_RenderLine(renderer, LineStart.x, LineStart.y, LineEnd.x, LineEnd.y))
         {
             std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
             SDL_ClearError();
@@ -77,17 +82,7 @@ void ssSWDebugDraw::DrawSolidPolygon(const b2Vec2* pVertices, int VertexCount, c
     }
 }
 
-float ssSWDebugDraw::MeterToPixel(const float Value) const
-{
-    return (Value * m_MetersPerPixelFactor);
-}
-
-b2Vec2 ssSWDebugDraw::MeterToPixel(const b2Vec2& rVector)
-{
-    return b2Vec2(MeterToPixel(rVector.x), MeterToPixel(rVector.y));
-}
-
-SDL_Color ssSWDebugDraw::ToSDLColor(const b2HexColor& color)
+static SDL_Color ToSDLColor(const b2HexColor& color, const ssSWDebugDraw* pDraw)
 {
     SDL_Color sdlColor;
     sdlColor.r = (color >> 16) & 0xFF;
@@ -95,4 +90,24 @@ SDL_Color ssSWDebugDraw::ToSDLColor(const b2HexColor& color)
     sdlColor.b = color & 0xFF;
     sdlColor.a = 255;
     return sdlColor;
+}
+
+static float MeterToPixel(const float Value, const ssSWDebugDraw* self)
+{
+    return (Value * self->getMeterPerPixelFactor());
+}
+
+static b2Vec2 MeterToPixel(const b2Vec2 rVector, const ssSWDebugDraw* self)
+{
+    return b2Vec2(MeterToPixel(rVector.x, self), MeterToPixel(rVector.y, self));
+}
+
+SDL_Renderer* ssSWDebugDraw::getRenderer() const
+{
+    return m_pRenderer;
+}
+
+float ssSWDebugDraw::getMeterPerPixelFactor() const
+{
+    return m_MetersPerPixelFactor;
 }
