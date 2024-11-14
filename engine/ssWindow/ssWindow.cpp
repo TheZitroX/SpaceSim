@@ -94,7 +94,7 @@ void ssWindow::draw()
 //    SDL_RenderFillRect(m_rendererPtr, &rect);
 
     m_simulationWorld.debugDraw();
-    drawMouseMotion();
+    //drawMouseMotion();
     //drawFPS();
 
     SDL_RenderPresent(m_rendererPtr);
@@ -122,6 +122,7 @@ void ssWindow::handleSDLEvents()
                 break;
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 m_mouseMotionActive = true;
+                handleSDLMouseMotion(event.motion);
                 break;
             case SDL_EVENT_MOUSE_BUTTON_UP:
                 m_mouseMotionActive = false;
@@ -166,8 +167,10 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
     if (!m_mouseMotionActive)
         return;
 
-    m_mouseMotion.velocity = {motion.xrel, motion.yrel};
-    m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
+    //m_mouseMotion.velocity = {motion.xrel, motion.yrel};
+    //m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
+
+    m_simulationWorld.addRect(motion.x, motion.y, 1, 1);
 }
 
 void ssWindow::drawMouseMotion()

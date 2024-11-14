@@ -22,6 +22,7 @@ public:
 
     void debugDraw();
 
+    void addRect(float x, float y, float width, float height);
 private:
     b2WorldId m_worldId{};
     b2BodyId  m_bodyId{};

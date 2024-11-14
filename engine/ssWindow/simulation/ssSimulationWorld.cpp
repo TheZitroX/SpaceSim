@@ -8,6 +8,7 @@
 #include "ssSWDebugDraw.h"
 
 constexpr float GRAVITY = 9.80665;
+constexpr float METERS_PER_PIXEL_RATIO = 2.0f;
 
 ssSimulationWorld::ssSimulationWorld()
 {
@@ -22,21 +23,21 @@ ssSimulationWorld::ssSimulationWorld()
         const auto groundId  = b2CreateBody(m_worldId, &groundBodyDefinition);
         const auto groundBox = b2MakeBox(500.0f, 1.0f);
 
-        const auto groundShapeDef = b2DefaultShapeDef();
-        auto       shapeId        = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+        auto groundShapeDef = b2DefaultShapeDef();
+        groundShapeDef.restitution = 0.0f;
+        (void) b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
     }
 
     {
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type     = b2_dynamicBody;
-        bodyDef.position = (b2Vec2) {100.0f, 0.0f};
+        bodyDef.position = (b2Vec2) {100.0f, 300.0f};
         m_bodyId = b2CreateBody(m_worldId, &bodyDef);
 
         b2Polygon  dynamicBox = b2MakeBox(5.0f, 5.0f);
         b2ShapeDef shapeDef   = b2DefaultShapeDef();
-        shapeDef.density  = 0.01f;
-        shapeDef.friction = 0.3f;
-        auto shapeID = b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
+        shapeDef.restitution = 0.5f;
+        (void) b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
     }
 }
 
@@ -54,10 +55,23 @@ void ssSimulationWorld::step(const float deltaTime, const int subStepCount)
 
 void ssSimulationWorld::setRenderer(SDL_Renderer* rendererPtr)
 {
-    m_debugDraw = new ssSWDebugDraw(rendererPtr, 1.0f);
+    m_debugDraw = new ssSWDebugDraw(rendererPtr, METERS_PER_PIXEL_RATIO);
 }
 
 void ssSimulationWorld::debugDraw()
 {
     b2World_Draw(m_worldId, m_debugDraw);
+}
+
+void ssSimulationWorld::addRect(float x, float y, float width, float height)
+{
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type     = b2_dynamicBody;
+    bodyDef.position = (b2Vec2) {x / METERS_PER_PIXEL_RATIO, y / METERS_PER_PIXEL_RATIO};
+    const auto bodyId = b2CreateBody(m_worldId, &bodyDef);
+
+    b2Polygon  dynamicBox = b2MakeBox(width, height);
+    b2ShapeDef shapeDef   = b2DefaultShapeDef();
+    shapeDef.restitution = 0.5f;
+    (void) b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 }
