@@ -29,6 +29,7 @@ ssWindow::ssWindow()
         1280,
         720,
         SDL_WINDOW_RESIZABLE
+        | SDL_WINDOW_FULLSCREEN
     );
     if (!m_windowPtr)
     {
@@ -121,15 +122,29 @@ void ssWindow::handleSDLEvents()
                 handleSDLKeyDown(event.key);
                 break;
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                m_mouseMotionActive = true;
-                handleSDLMouseMotion(event.motion);
+            {
+                const auto mouseEvent = event.button;
+                if (mouseEvent.button == SDL_BUTTON_LEFT)
+                {
+                    m_mouseMotionActive = true;
+                    handleSDLMouseMotion(event.motion);
+                }
+                else if (mouseEvent.button == SDL_BUTTON_RIGHT)
+                {
+                    m_simulationWorld.createExplosion(mouseEvent.x, mouseEvent.y);
+                }
+
                 break;
+            }
             case SDL_EVENT_MOUSE_BUTTON_UP:
                 m_mouseMotionActive = false;
                 break;
             case SDL_EVENT_MOUSE_MOTION:
-                handleSDLMouseMotion(event.motion);
+            {
+                const auto mouseMotionEvent = event.motion;
+                handleSDLMouseMotion(mouseMotionEvent);
                 break;
+            }
             default:
                 break;
         }
@@ -170,7 +185,11 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
     //m_mouseMotion.velocity = {motion.xrel, motion.yrel};
     //m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
 
-    m_simulationWorld.addRect(motion.x, motion.y, 1, 1);
+    for (int i = 0; i < 100; i++)
+    {
+        m_simulationWorld.addRectScreenToWorld(motion.x, motion.y, 0.1, 0.1);
+    }
+    //m_simulationWorld.addRect(motion.x, motion.y, 0.1, 0.1);
 }
 
 void ssWindow::drawMouseMotion()

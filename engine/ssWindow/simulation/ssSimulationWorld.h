@@ -22,10 +22,12 @@ public:
 
     void debugDraw();
 
-    void addRect(float x, float y, float width, float height);
+    void addRectScreenToWorld(float x, float y, float width, float height);
+    void createExplosion(float x, float y);
 private:
     b2WorldId m_worldId{};
     b2BodyId  m_bodyId{};
 
     ssSWDebugDraw* m_debugDraw{};
+    void addRect(float x, float y, float width, float height);
 };
