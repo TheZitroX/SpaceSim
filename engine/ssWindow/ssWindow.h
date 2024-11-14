@@ -44,7 +44,7 @@ private:
     void runRenderLoop();
     std::thread       m_renderThread;
 
-    void update();
+    void update(float deltaTime = 0);
 
     void handleSDLEvents();
     void handleSDLKeyDown(const SDL_KeyboardEvent& key);

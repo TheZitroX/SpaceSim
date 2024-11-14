@@ -40,9 +40,9 @@ void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVerti
         if (i < (VertexCount - 2))
         {
             const b2Vec2 TriangleVertex[3] = {
-                MeterToPixel(pVertices[0 + 0], self),
-                MeterToPixel(pVertices[i + 1], self),
-                MeterToPixel(pVertices[i + 2], self),
+                MeterToPixel(b2Add(pVertices[0 + 0], transform.p), self),
+                MeterToPixel(b2Add(pVertices[i + 1], transform.p), self),
+                MeterToPixel(b2Add(pVertices[i + 2], transform.p), self),
             };
 
             for (auto j: TriangleVertex)
@@ -71,8 +71,8 @@ void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVerti
 
     for (int32_t i = 0; i < VertexCount; ++i)
     {
-        const b2Vec2 LineStart = MeterToPixel(pVertices[i], self);
-        const b2Vec2 LineEnd   = MeterToPixel(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0], self);
+        const b2Vec2 LineStart = MeterToPixel(b2Add(pVertices[i], transform.p), self);
+        const b2Vec2 LineEnd   = MeterToPixel(b2Add(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0], transform.p), self);
 
         if (!SDL_RenderLine(renderer, LineStart.x, LineStart.y, LineEnd.x, LineEnd.y))
         {

@@ -61,6 +61,7 @@ ssWindow::~ssWindow()
 void ssWindow::run()
 {
     m_running = true;
+    float deltaTime = 0;
 
 //#define USE_MULTITHREADING
 #ifdef USE_MULTITHREADING
@@ -69,11 +70,16 @@ void ssWindow::run()
 
     while (m_running)
     {
+        const auto startTimeNS = SDL_GetTicksNS();
+
         handleSDLEvents();
-        update();
+        update(deltaTime);
 #ifndef USE_MULTITHREADING
         draw();
 #endif
+
+        const auto endTimeNS = SDL_GetTicksNS();
+        deltaTime = static_cast<float>(endTimeNS - startTimeNS) / SDL_NS_PER_SECOND;
     }
 }
 
@@ -89,14 +95,14 @@ void ssWindow::draw()
 
     m_simulationWorld.debugDraw();
     drawMouseMotion();
-    drawFPS();
+    //drawFPS();
 
     SDL_RenderPresent(m_rendererPtr);
 }
 
-void ssWindow::update()
+void ssWindow::update(const float deltaTime)
 {
-    m_simulationWorld.step(1.0f / 60.0f, 4);
+    m_simulationWorld.step(deltaTime, 400);
 }
 
 void ssWindow::handleSDLEvents()

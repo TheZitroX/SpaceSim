@@ -3,6 +3,7 @@
 //
 
 #include <box2d/box2d.h>
+#include <iostream>
 #include "ssSimulationWorld.h"
 #include "ssSWDebugDraw.h"
 
@@ -16,10 +17,10 @@ ssSimulationWorld::ssSimulationWorld()
 
     {
         auto groundBodyDefinition = b2DefaultBodyDef();
-        groundBodyDefinition.position = b2Vec2(100, 100);
+        groundBodyDefinition.position = b2Vec2(250, 500);
 
         const auto groundId  = b2CreateBody(m_worldId, &groundBodyDefinition);
-        const auto groundBox = b2MakeBox(50.0f, 1.0f);
+        const auto groundBox = b2MakeBox(500.0f, 1.0f);
 
         const auto groundShapeDef = b2DefaultShapeDef();
         auto       shapeId        = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
@@ -28,7 +29,7 @@ ssSimulationWorld::ssSimulationWorld()
     {
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type     = b2_dynamicBody;
-        bodyDef.position = (b2Vec2) {0.0f, 0.0f};
+        bodyDef.position = (b2Vec2) {100.0f, 0.0f};
         m_bodyId = b2CreateBody(m_worldId, &bodyDef);
 
         b2Polygon  dynamicBox = b2MakeBox(5.0f, 5.0f);
@@ -46,14 +47,14 @@ ssSimulationWorld::~ssSimulationWorld()
     delete m_debugDraw;
 }
 
-void ssSimulationWorld::step(const float timeStep, const int subStepCount)
+void ssSimulationWorld::step(const float deltaTime, const int subStepCount)
 {
-    b2World_Step(m_worldId, timeStep, subStepCount);
+    b2World_Step(m_worldId, deltaTime, subStepCount);
 }
 
 void ssSimulationWorld::setRenderer(SDL_Renderer* rendererPtr)
 {
-    m_debugDraw = new ssSWDebugDraw(rendererPtr, 10.0f);
+    m_debugDraw = new ssSWDebugDraw(rendererPtr, 1.0f);
 }
 
 void ssSimulationWorld::debugDraw()

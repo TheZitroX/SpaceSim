@@ -16,7 +16,7 @@ public:
 
     ~ssSimulationWorld();
 
-    void step(float timeStep, int subStepCount);
+    void step(float deltaTime, int subStepCount);
 
     void setRenderer(SDL_Renderer* rendererPtr);
 
