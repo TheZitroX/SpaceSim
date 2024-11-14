@@ -42,6 +42,7 @@ ssWindow::ssWindow()
         std::cerr << "SDL_CreateRenderer failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
+    SDL_SetRenderDrawBlendMode(m_rendererPtr, SDL_BLENDMODE_BLEND);
 
     m_simulationWorld.setRenderer(m_rendererPtr);
 }
@@ -86,21 +87,16 @@ void ssWindow::draw()
 //    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
 //    SDL_RenderFillRect(m_rendererPtr, &rect);
 
-    drawMouseMotion();
-
-    drawFPS();
-
     m_simulationWorld.debugDraw();
+    drawMouseMotion();
+    drawFPS();
 
     SDL_RenderPresent(m_rendererPtr);
 }
 
 void ssWindow::update()
 {
-    m_simulationWorld.step(1.0f / 60.0f, 1);
-
-    // todo implement float deltaTime
-    SDL_Delay(16);
+    m_simulationWorld.step(1.0f / 60.0f, 4);
 }
 
 void ssWindow::handleSDLEvents()

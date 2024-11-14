@@ -5,7 +5,9 @@
 #pragma once
 
 #include <box2d/box2d.h>
-#include "ssSWDebugDraw.h"
+
+class SDL_Renderer;
+class ssSWDebugDraw;
 
 class ssSimulationWorld
 {
@@ -24,6 +26,5 @@ private:
     b2WorldId m_worldId{};
     b2BodyId  m_bodyId{};
 
-    SDL_Renderer* m_rendererPtr{};
-    ssSWDebugDraw m_debugDraw{};
+    ssSWDebugDraw* m_debugDraw{};
 };

@@ -9,7 +9,7 @@
 #include <cassert>
 
 
-static SDL_Color ToSDLColor(const b2HexColor& color, const ssSWDebugDraw* pDraw);
+static SDL_Color ToSDLColor(const b2HexColor& color);
 
 static b2Vec2 MeterToPixel(b2Vec2 rVector, const ssSWDebugDraw* self);
 
@@ -23,15 +23,15 @@ SDL_FColor ToSDLFColor(const SDL_Color& color)
     };
 }
 
-[[maybe_unused]] void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVertices, int VertexCount,
+void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVertices, int VertexCount,
                                                       float radius,
                                                       b2HexColor rColor, void* context)
 {
     auto* self = static_cast<ssSWDebugDraw*>(context);
     assert(self != nullptr);
 
-    const SDL_Color LineColor     = ToSDLColor(rColor, self);
-    SDL_FColor      TriangleColor = ToSDLFColor(ToSDLColor(rColor, self));
+    const SDL_Color LineColor     = ToSDLColor(rColor);
+    SDL_FColor      TriangleColor = ToSDLFColor(ToSDLColor(rColor));
     TriangleColor.a = 128;
 
     std::vector<SDL_Vertex> vecVertices;
@@ -82,7 +82,7 @@ SDL_FColor ToSDLFColor(const SDL_Color& color)
     }
 }
 
-static SDL_Color ToSDLColor(const b2HexColor& color, const ssSWDebugDraw* pDraw)
+static SDL_Color ToSDLColor(const b2HexColor& color)
 {
     SDL_Color sdlColor;
     sdlColor.r = (color >> 16) & 0xFF;

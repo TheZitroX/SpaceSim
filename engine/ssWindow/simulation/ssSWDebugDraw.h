@@ -22,7 +22,7 @@ public:
         b2DebugDraw::drawShapes = true;
         b2DebugDraw::DrawSolidPolygon = ssSWDebugDraw::DrawSolidPolygon;
 
-        b2DebugDraw::drawingBounds = {0, 0, 0, 0};
+        b2DebugDraw::drawingBounds = {{0, 0}, {1000, 1000}};
         b2DebugDraw::context = this;
     }
 
