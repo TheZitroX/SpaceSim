@@ -54,6 +54,27 @@ void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVerti
         }
     }
 
+    // rotate around the center
+    // calc center of SDL_Vertices
+    b2Vec2 center = {0, 0};
+    for (auto& vertex: vecVertices)
+    {
+        center.x += vertex.position.x;
+        center.y += vertex.position.y;
+    }
+    center.x /= vecVertices.size();
+    center.y /= vecVertices.size();
+
+    const auto angle = transform.q;
+    for (auto& vertex: vecVertices)
+    {
+        const float x = vertex.position.x - center.x;
+        const float y = vertex.position.y - center.y;
+        vertex.position.x = center.x + x * angle.c - y * angle.s;
+        vertex.position.y = center.y + x * angle.s + y * angle.c;
+    }
+
+
     auto renderer = self->getRenderer();
     assert(renderer != nullptr);
 
@@ -70,18 +91,19 @@ void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVerti
         SDL_ClearError();
     }
 
-    for (int32_t i = 0; i < VertexCount; ++i)
-    {
-        const b2Vec2 LineStart = MeterToPixel(b2Add(pVertices[i], transform.p), self);
-        const b2Vec2 LineEnd   = MeterToPixel(b2Add(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0], transform.p),
-                                              self);
-
-        if (!SDL_RenderLine(renderer, LineStart.x, LineStart.y, LineEnd.x, LineEnd.y))
-        {
-            std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
-            SDL_ClearError();
-        }
-    }
+    // todo fix angle
+    //for (int32_t i = 0; i < VertexCount; ++i)
+    //{
+    //    const b2Vec2 LineStart = MeterToPixel(b2Add(pVertices[i], transform.p), self);
+    //    const b2Vec2 LineEnd   = MeterToPixel(b2Add(pVertices[(i < (VertexCount - 1)) ? (i + 1) : 0], transform.p),
+    //                                          self);
+    //
+    //    if (!SDL_RenderLine(renderer, LineStart.x, LineStart.y, LineEnd.x, LineEnd.y))
+    //    {
+    //        std::cerr << "SDL_RenderLine failed: " << SDL_GetError() << std::endl;
+    //        SDL_ClearError();
+    //    }
+    //}
 }
 
 static SDL_Color ToSDLColor(const b2HexColor& color)
@@ -137,6 +159,59 @@ void ssSWDebugDraw::DrawSolidCircle(b2Transform transform, float radius, b2HexCo
                          static_cast<int32_t>(std::round(pixelCenter.y)), pixelRadius))
     {
         std::cerr << "ssSDLDrawCircle failed: " << std::endl;
+        return;
+    }
+}
+
+void ssSWDebugDraw::DrawCircle(b2Vec2 center, float radius, b2HexColor color, void* context)
+{
+    auto* self = static_cast<ssSWDebugDraw*>(context);
+    assert(self != nullptr);
+
+    const SDL_Color sdlColor = ToSDLColor(color);
+
+    const b2Vec2 pixelCenter = MeterToPixel(center, self);
+    const auto   pixelRadius = static_cast<int32_t>(std::round(MeterToPixel(radius, self)));
+
+    auto renderer = self->getRenderer();
+    assert(renderer != nullptr);
+
+    if (!SDL_SetRenderDrawColor(renderer, sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a))
+    {
+        std::cerr << "SDL_SetRenderDrawColor failed: " << SDL_GetError() << std::endl;
+        SDL_ClearError();
+    }
+
+    if (!ssSDLDrawCircle(renderer, static_cast<int32_t>(std::round(pixelCenter.x)),
+                         static_cast<int32_t>(std::round(pixelCenter.y)), pixelRadius))
+    {
+        std::cerr << "ssSDLDrawCircle failed: " << std::endl;
+        return;
+    }
+}
+
+void ssSWDebugDraw::b2DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* context)
+{
+    auto* self = static_cast<ssSWDebugDraw*>(context);
+    assert(self != nullptr);
+
+    const SDL_Color sdlColor = ToSDLColor(color);
+
+    const b2Vec2 pixelP1 = MeterToPixel(p1, self);
+    const b2Vec2 pixelP2 = MeterToPixel(p2, self);
+
+    auto renderer = self->getRenderer();
+    assert(renderer != nullptr);
+
+    if (!SDL_SetRenderDrawColor(renderer, sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a))
+    {
+        std::cerr << "SDL_SetRenderDrawColor failed: " << SDL_GetError() << std::endl;
+        SDL_ClearError();
+    }
+
+    if (!SDL_RenderLine(renderer, pixelP1.x, pixelP1.y, pixelP2.x, pixelP2.y))
+    {
+        std::cerr << "ssSDLDrawLine failed: " << std::endl;
         return;
     }
 }

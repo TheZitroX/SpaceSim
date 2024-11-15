@@ -185,7 +185,7 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
     //m_mouseMotion.velocity = {motion.xrel, motion.yrel};
     //m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
 
-    m_simulationWorld.addHundredRectsScreenToWorld(motion.x, motion.y, 0.1, 0.1, motion.xrel*20, motion.yrel*20);
+    m_simulationWorld.addHundredRectsScreenToWorld(motion.x, motion.y, 10, 10, motion.xrel*20, motion.yrel*20);
     //m_simulationWorld.addRect(motion.x, motion.y, 0.1, 0.1);
 }
 

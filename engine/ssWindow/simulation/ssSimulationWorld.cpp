@@ -66,7 +66,8 @@ ssSimulationWorld::ssSimulationWorld()
     {
         // draw a circle
         b2ShapeDef     shapeDef = b2DefaultShapeDef();
-        const b2Circle circle{0.0f, 0.0f, 100.0f};
+
+        const auto circlePolygon = b2MakeRoundedBox(50, 50, 100);
 
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type      = b2_dynamicBody;
@@ -74,8 +75,7 @@ ssSimulationWorld::ssSimulationWorld()
         bodyDef.isEnabled = true;
 
         const auto bodyId  = b2CreateBody(m_worldId, &bodyDef);
-        const auto shapeId = b2CreateCircleShape(bodyId, reinterpret_cast<const b2ShapeDef*>(&bodyDef), &circle);
-        //(void) b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+        (void) b2CreatePolygonShape(bodyId, &shapeDef, &circlePolygon);
     }
 }
 
