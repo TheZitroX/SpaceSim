@@ -103,7 +103,7 @@ void ssWindow::draw()
 
 void ssWindow::update(const float deltaTime)
 {
-    m_simulationWorld.step(deltaTime, 400);
+    m_simulationWorld.step(deltaTime, 4);
 }
 
 void ssWindow::handleSDLEvents()
@@ -185,10 +185,7 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
     //m_mouseMotion.velocity = {motion.xrel, motion.yrel};
     //m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
 
-    for (int i = 0; i < 100; i++)
-    {
-        m_simulationWorld.addRectScreenToWorld(motion.x, motion.y, 0.1, 0.1);
-    }
+    m_simulationWorld.addHundredRectsScreenToWorld(motion.x, motion.y, 0.1, 0.1, motion.xrel*20, motion.yrel*20);
     //m_simulationWorld.addRect(motion.x, motion.y, 0.1, 0.1);
 }
 

@@ -20,9 +20,15 @@ public:
         , m_MetersPerPixelFactor(MetersPerPixelFactor)
     {
         b2DebugDraw::drawShapes = true;
-        b2DebugDraw::DrawSolidPolygon = ssSWDebugDraw::DrawSolidPolygon;
 
-        b2DebugDraw::drawingBounds = {{0, 0}, {1000, 1000}};
+        b2DebugDraw::DrawSolidPolygon = ssSWDebugDraw::DrawSolidPolygon;
+        b2DebugDraw::DrawSolidCircle  = ssSWDebugDraw::DrawSolidCircle;
+
+        b2DebugDraw::drawingBounds = {
+            {0,    0},
+            {1000, 1000}
+        };
+
         b2DebugDraw::context = this;
     }
 
@@ -37,7 +43,7 @@ public:
 
     //static void b2DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context){};
     //
-    //static void b2DrawCircle(b2Vec2 center, float radius, b2HexColor color, void* context){};
+    static void DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void* context);
     //
     //static void b2DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void* context){};
     //

@@ -10,7 +10,8 @@ add_executable(${PROJECT_NAME} main.cpp
         ssWindow/simulation/ssSimulationWorld.h
         ssWindow/simulation/ssSimulationWorld.cpp
         ssWindow/simulation/ssSWDebugDraw.h
-        ssWindow/simulation/ssSWDebugDraw.cpp)
+        ssWindow/simulation/ssSWDebugDraw.cpp
+)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Base SDL3::SDL3)
 target_include_directories(${PROJECT_NAME} PUBLIC Base SDL3::SDL3)
