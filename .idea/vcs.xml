@@ -2,5 +2,12 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL_ttf" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL_ttf/external/SDL" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL_ttf/external/freetype" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL_ttf/external/freetype/subprojects/dlg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/SDL_ttf/external/harfbuzz" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/box2d" vcs="Git" />
   </component>
 </project>

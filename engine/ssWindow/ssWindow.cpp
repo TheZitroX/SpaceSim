@@ -8,6 +8,7 @@
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <mutex>
 
 ssWindow::ssWindow()
 {
