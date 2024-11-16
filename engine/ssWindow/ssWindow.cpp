@@ -104,7 +104,8 @@ void ssWindow::draw()
 
 void ssWindow::update(const float deltaTime)
 {
-    m_simulationWorld.step(deltaTime, 4);
+    const auto timeStep = deltaTime > 1.0f/60.0f ? 1.0f/60.0f : deltaTime;
+    m_simulationWorld.step(timeStep, 4);
 }
 
 void ssWindow::handleSDLEvents()
