@@ -7,8 +7,8 @@
 #include "ssSimulationWorld.h"
 #include "ssSWDebugDraw.h"
 
-//constexpr float GRAVITY                = 9.80665;
-constexpr float GRAVITY                = 0.0;
+constexpr float GRAVITY                = 9.80665;
+//constexpr float GRAVITY                = 0.0;
 constexpr float METERS_PER_PIXEL_RATIO = 2.0f;
 
 ssSimulationWorld::ssSimulationWorld()
@@ -45,37 +45,37 @@ ssSimulationWorld::ssSimulationWorld()
     }
 
     {
-        //constexpr float positionX = 300.0f;
-        //constexpr float positionY = 400.0f;
-        //constexpr float width     = 150.0f;
-        //constexpr float height    = 25.0f;
-        //constexpr float cubeSize  = 0.2f;
-        //
-        //// fill the space with rectangles
-        //constexpr int columns = width / cubeSize;
-        //constexpr int rows    = height / cubeSize;
-        //
-        //for (int i = 0; i < columns; ++i)
-        //{
-        //    for (int j = 0; j < rows; ++j)
-        //    {
-        //        addRect(positionX + i * cubeSize, positionY + j * cubeSize, cubeSize / 2, cubeSize / 2);
-        //    }
-        //}
+        constexpr float positionX = 300.0f;
+        constexpr float positionY = 400.0f;
+        constexpr float width     = 600.0f;
+        constexpr float height    = 60.0f;
+        constexpr float cubeSize  = 1.0f;
+
+        // fill the space with rectangles
+        constexpr int columns = width / cubeSize;
+        constexpr int rows    = height / cubeSize;
+
+        for (int i = 0; i < columns; ++i)
+        {
+            for (int j = 0; j < rows; ++j)
+            {
+                addRect(positionX + i * cubeSize, positionY + j * cubeSize, cubeSize / 2, cubeSize / 2);
+            }
+        }
     }
     {
         // draw a circle
-        b2ShapeDef     shapeDef = b2DefaultShapeDef();
-
-        const auto circlePolygon = b2MakeRoundedBox(50, 50, 100);
-
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.type      = b2_dynamicBody;
-        bodyDef.position  = (b2Vec2) {400.0f, 300.0f};
-        bodyDef.isEnabled = true;
-
-        const auto bodyId  = b2CreateBody(m_worldId, &bodyDef);
-        (void) b2CreatePolygonShape(bodyId, &shapeDef, &circlePolygon);
+        //b2ShapeDef     shapeDef = b2DefaultShapeDef();
+        //
+        //const auto circlePolygon = b2MakeRoundedBox(50, 50, 100);
+        //
+        //b2BodyDef bodyDef = b2DefaultBodyDef();
+        //bodyDef.type      = b2_dynamicBody;
+        //bodyDef.position  = (b2Vec2) {400.0f, 300.0f};
+        //bodyDef.isEnabled = true;
+        //
+        //const auto bodyId  = b2CreateBody(m_worldId, &bodyDef);
+        //(void) b2CreatePolygonShape(bodyId, &shapeDef, &circlePolygon);
     }
 }
 
@@ -117,7 +117,7 @@ void ssSimulationWorld::addHundredRectsScreenToWorld(float x, float y, float wid
     bodyDef.linearVelocity    = {dx, dy};
     b2Polygon  dynamicBox = b2MakeBox(width, height);
     b2ShapeDef shapeDef   = b2DefaultShapeDef();
-    shapeDef.friction    = 0.0f;
+    shapeDef.friction    = 1.0f;
     shapeDef.restitution = 0.0f;
     shapeDef.density     = 1000.0f;
 
