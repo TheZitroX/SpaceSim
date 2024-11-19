@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <sdl3/sdl.h>
+#include <SDL3/SDL.h>
 #include <box2d/box2d.h>
 
 class ssSWDebugDraw : public b2DebugDraw
