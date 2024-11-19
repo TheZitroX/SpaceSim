@@ -30,38 +30,81 @@ ssSimulationWorld::ssSimulationWorld()
         (void) b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
     }
 
-    {
-        b2BodyDef bodyDef = b2DefaultBodyDef();
+    { // spring test
+        auto bodyDef = b2DefaultBodyDef();
         bodyDef.type     = b2_dynamicBody;
         bodyDef.position = (b2Vec2) {100.0f, 300.0f};
-
-        b2Polygon  dynamicBox = b2MakeBox(5.0f, 5.0f);
-        b2ShapeDef shapeDef   = b2DefaultShapeDef();
+        auto dynamicBox = b2MakeBox(5.0f, 5.0f);
+        auto shapeDef   = b2DefaultShapeDef();
         shapeDef.restitution = 0.5f;
         shapeDef.density     = 0.1f;
 
-        m_bodyId = b2CreateBody(m_worldId, &bodyDef);
-        (void) b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
+
+        auto bodyDef2 = b2DefaultBodyDef();
+        bodyDef2.type     = b2_dynamicBody;
+        bodyDef2.position = (b2Vec2) {200.0f, 300.0f};
+        auto dynamicBox2 = b2MakeBox(5.0f, 5.0f);
+        auto shapeDef2   = b2DefaultShapeDef();
+        shapeDef2.restitution = 0.5f;
+        shapeDef2.density     = 0.1f;
+
+        auto bodyId = b2CreateBody(m_worldId, &bodyDef);
+        auto bodyId2 = b2CreateBody(m_worldId, &bodyDef2);
+        (void) b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+        (void) b2CreatePolygonShape(bodyId2, &shapeDef2, &dynamicBox2);
+
+        auto distanceJointDef = b2DefaultDistanceJointDef();
+        distanceJointDef.bodyIdA = bodyId;
+        distanceJointDef.bodyIdB = bodyId2;
+        distanceJointDef.localAnchorA = {0, 0};
+        distanceJointDef.localAnchorB = {0, 0};
+        distanceJointDef.length = 100;
+        distanceJointDef.minLength = 0;
+        distanceJointDef.maxLength = 1000;
+        distanceJointDef.maxMotorForce = 10;
+        distanceJointDef.motorSpeed = 0;
+        distanceJointDef.enableMotor = true;
+        distanceJointDef.collideConnected = false;
+        distanceJointDef.enableSpring = true;
+        distanceJointDef.hertz = 1;
+        distanceJointDef.dampingRatio = 0.5;
+        
+
+        b2CreateDistanceJoint(m_worldId, &distanceJointDef);
     }
 
     {
-        constexpr float positionX = 300.0f;
-        constexpr float positionY = 400.0f;
-        constexpr float width     = 600.0f;
-        constexpr float height    = 60.0f;
-        constexpr float cubeSize  = 1.0f;
+        //b2BodyDef bodyDef = b2DefaultBodyDef();
+        //bodyDef.type     = b2_dynamicBody;
+        //bodyDef.position = (b2Vec2) {100.0f, 300.0f};
+        //
+        //b2Polygon  dynamicBox = b2MakeBox(5.0f, 5.0f);
+        //b2ShapeDef shapeDef   = b2DefaultShapeDef();
+        //shapeDef.restitution = 0.5f;
+        //shapeDef.density     = 0.1f;
+        //
+        //m_bodyId = b2CreateBody(m_worldId, &bodyDef);
+        //(void) b2CreatePolygonShape(m_bodyId, &shapeDef, &dynamicBox);
+    }
 
-        // fill the space with rectangles
-        constexpr int columns = width / cubeSize;
-        constexpr int rows    = height / cubeSize;
-
-        for (int i = 0; i < columns; ++i)
-        {
-            for (int j = 0; j < rows; ++j)
-            {
-                addRect(positionX + i * cubeSize, positionY + j * cubeSize, cubeSize / 2, cubeSize / 2);
-            }
-        }
+    {
+        //constexpr float positionX = 300.0f;
+        //constexpr float positionY = 400.0f;
+        //constexpr float width     = 600.0f;
+        //constexpr float height    = 60.0f;
+        //constexpr float cubeSize  = 1.0f;
+        //
+        //// fill the space with rectangles
+        //constexpr int columns = width / cubeSize;
+        //constexpr int rows    = height / cubeSize;
+        //
+        //for (int i = 0; i < columns; ++i)
+        //{
+        //    for (int j = 0; j < rows; ++j)
+        //    {
+        //        addRect(positionX + i * cubeSize, positionY + j * cubeSize, cubeSize / 2, cubeSize / 2);
+        //    }
+        //}
     }
     {
         // draw a circle
