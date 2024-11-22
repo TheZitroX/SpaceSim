@@ -20,6 +20,7 @@ public:
         , m_MetersPerPixelFactor(MetersPerPixelFactor)
     {
         b2DebugDraw::drawShapes = true;
+        b2DebugDraw::drawJoints = true;
         //b2DebugDraw::drawAABBs  = true;
         //b2DebugDraw::drawGraphColors = true;
         //b2DebugDraw::drawMass   = true;
