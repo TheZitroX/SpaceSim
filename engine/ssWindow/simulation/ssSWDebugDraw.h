@@ -19,8 +19,9 @@ public:
         , m_pRenderer(pRenderer)
         , m_MetersPerPixelFactor(MetersPerPixelFactor)
     {
-        b2DebugDraw::drawShapes = true;
-        b2DebugDraw::drawJoints = true;
+        b2DebugDraw::drawShapes      = true;
+        b2DebugDraw::drawJoints      = true;
+        b2DebugDraw::drawJointExtras = true;
         //b2DebugDraw::drawAABBs  = true;
         //b2DebugDraw::drawGraphColors = true;
         //b2DebugDraw::drawMass   = true;
@@ -55,7 +56,7 @@ public:
     //
     //static void b2DrawTransform(b2Transform transform, void* context){};
     //
-    //static void b2DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context){};
+    static void b2DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context);
     //
     //static void b2DrawString(b2Vec2 p, const char* s, void* context){};
 

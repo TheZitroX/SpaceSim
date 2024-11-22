@@ -215,3 +215,29 @@ void ssSWDebugDraw::b2DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* 
         return;
     }
 }
+
+void ssSWDebugDraw::b2DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context)
+{
+    auto* self = static_cast<ssSWDebugDraw*>(context);
+    assert(self != nullptr);
+
+    const SDL_Color sdlColor = ToSDLColor(color);
+
+    const b2Vec2 pixelP = MeterToPixel(p, self);
+
+    auto renderer = self->getRenderer();
+    assert(renderer != nullptr);
+
+    if (!SDL_SetRenderDrawColor(renderer, sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a))
+    {
+        std::cerr << "SDL_SetRenderDrawColor failed: " << SDL_GetError() << std::endl;
+        SDL_ClearError();
+    }
+
+    if (!ssSDLDrawCircle(renderer, static_cast<int32_t>(std::round(pixelP.x)),
+                         static_cast<int32_t>(std::round(pixelP.y)), static_cast<int>(std::round(size))))
+    {
+        std::cerr << "ssSDLDrawPoint failed: " << std::endl;
+        return;
+    }
+}
