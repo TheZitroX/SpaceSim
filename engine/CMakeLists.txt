@@ -21,3 +21,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC Base SDL3_ttf::SDL3_ttf)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Base box2d::box2d)
 target_include_directories(${PROJECT_NAME} PUBLIC Base box2d::box2d)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ImGui)
+target_include_directories("ImGui" PUBLIC ${IMGUI_PATH})

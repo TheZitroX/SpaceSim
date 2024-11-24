@@ -6,6 +6,10 @@ add_subdirectory(vendor/SDL)
 add_subdirectory(vendor/SDL_ttf)
 add_subdirectory(vendor/box2d)
 
+set(IMGUI_PATH  "vendor/imgui")
+file(GLOB IMGUI_SOURCES ${IMGUI_PATH}/*.cpp)
+add_library("ImGui" STATIC ${IMGUI_SOURCES})
+
 add_subdirectory(base)
 add_subdirectory(engine)
 
