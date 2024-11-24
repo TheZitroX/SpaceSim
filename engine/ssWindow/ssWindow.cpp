@@ -9,6 +9,8 @@
 #include <iostream>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <mutex>
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
 
 ssWindow::ssWindow()
 {
@@ -50,6 +52,12 @@ ssWindow::ssWindow()
     SDL_RenderPresent(m_rendererPtr);
 
     m_simulationWorld.setRenderer(m_rendererPtr);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui::StyleColorsDark();
+    ImGui_ImplSDL3_InitForSDLRenderer(m_windowPtr, m_rendererPtr);
 }
 
 ssWindow::~ssWindow()
@@ -57,6 +65,7 @@ ssWindow::~ssWindow()
     if (m_renderThread.joinable())
         m_renderThread.join();
 
+    ImGui_ImplSDL3_Shutdown();
     SDL_DestroyRenderer(m_rendererPtr);
     SDL_DestroyWindow(m_windowPtr);
     TTF_Quit();
@@ -107,7 +116,7 @@ void ssWindow::draw()
 
 void ssWindow::update(const float deltaTime)
 {
-    const auto timeStep = deltaTime > 1.0f/60.0f ? 1.0f/60.0f : deltaTime;
+    const auto timeStep = deltaTime > 1.0f / 60.0f ? 1.0f / 60.0f : deltaTime;
     m_simulationWorld.step(timeStep, 4);
 }
 
@@ -190,7 +199,7 @@ void ssWindow::handleSDLMouseMotion(const SDL_MouseMotionEvent& motion)
     //m_mouseMotion.velocity = {motion.xrel, motion.yrel};
     //m_mouseMotion.vecPoints.push_back({motion.x, motion.y});
 
-    m_simulationWorld.addHundredRectsScreenToWorld(motion.x, motion.y, 10, 10, motion.xrel*20, motion.yrel*20);
+    m_simulationWorld.addHundredRectsScreenToWorld(motion.x, motion.y, 10, 10, motion.xrel * 20, motion.yrel * 20);
     //m_simulationWorld.addRect(motion.x, motion.y, 0.1, 0.1);
 }
 
