@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME} main.cpp
         ${ABSOLUT_IMGUI_PATH}/imgui_widgets.cpp
         ${ABSOLUT_IMGUI_PATH}/imgui_tables.cpp
         ${ABSOLUT_IMGUI_PATH}/backends/imgui_impl_sdl3.cpp
+        ${ABSOLUT_IMGUI_PATH}/backends/imgui_impl_sdlrenderer3.cpp
 )
 
 target_link_libraries(

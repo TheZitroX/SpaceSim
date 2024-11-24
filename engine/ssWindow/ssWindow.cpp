@@ -11,6 +11,7 @@
 #include <mutex>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
 
 ssWindow::ssWindow()
 {
@@ -58,6 +59,7 @@ ssWindow::ssWindow()
     ImGuiIO& io = ImGui::GetIO();
     ImGui::StyleColorsDark();
     ImGui_ImplSDL3_InitForSDLRenderer(m_windowPtr, m_rendererPtr);
+    ImGui_ImplSDLRenderer3_Init(m_rendererPtr);
 }
 
 ssWindow::~ssWindow()
@@ -65,7 +67,9 @@ ssWindow::~ssWindow()
     if (m_renderThread.joinable())
         m_renderThread.join();
 
+    ImGui_ImplSDLRenderer3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
     SDL_DestroyRenderer(m_rendererPtr);
     SDL_DestroyWindow(m_windowPtr);
     TTF_Quit();
@@ -100,6 +104,14 @@ void ssWindow::run()
 
 void ssWindow::draw()
 {
+    ImGui_ImplSDL3_NewFrame();
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui::NewFrame();
+    ImGui::Begin("Hello, ImGui!");
+    ImGui::Text("This is some text.");
+    ImGui::End();
+    ImGui::Render();
+
     SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_RenderClear(m_rendererPtr);
 
@@ -108,6 +120,8 @@ void ssWindow::draw()
 //    SDL_RenderFillRect(m_rendererPtr, &rect);
 
     m_simulationWorld.debugDraw();
+
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_rendererPtr);
     //drawMouseMotion();
     //drawFPS();
 
@@ -126,6 +140,8 @@ void ssWindow::handleSDLEvents()
 
     while (SDL_PollEvent(&event))
     {
+        ImGui_ImplSDL3_ProcessEvent(&event);
+
         const auto eventType = event.type;
         switch (eventType)
         {
