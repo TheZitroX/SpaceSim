@@ -111,6 +111,8 @@ void ssWindow::draw()
     ImGui::Text("This is some text.");
     ImGui::End();
 
+    ImGui::ShowDemoWindow();
+
     // Draw FPS
     auto* drawList = ImGui::GetForegroundDrawList();
     std::string text = std::format("FPS: {:.0f}", ImGui::GetIO().Framerate);
