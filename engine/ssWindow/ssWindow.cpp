@@ -150,6 +150,10 @@ void ssWindow::handleSDLEvents()
     {
         ImGui_ImplSDL3_ProcessEvent(&event);
 
+        const ImGuiIO& io = ImGui::GetIO();
+        if (io.WantCaptureMouse || io.WantCaptureKeyboard)
+            continue;
+
         const auto eventType = event.type;
         switch (eventType)
         {
