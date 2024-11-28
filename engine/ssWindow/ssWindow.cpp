@@ -4,7 +4,6 @@
 
 #include "ssWindow.h"
 
-#include <memory>
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -154,42 +153,47 @@ void ssWindow::handleSDLEvents()
         if (io.WantCaptureMouse || io.WantCaptureKeyboard)
             continue;
 
-        const auto eventType = event.type;
-        switch (eventType)
-        {
-            case SDL_EVENT_QUIT:
-                m_running = false;
-                break;
-            case SDL_EVENT_KEY_DOWN:
-                handleSDLKeyDown(event.key);
-                break;
-            case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            {
-                const auto mouseEvent = event.button;
-                if (mouseEvent.button == SDL_BUTTON_LEFT)
-                {
-                    m_mouseMotionActive = true;
-                    handleSDLMouseMotion(event.motion);
-                }
-                else if (mouseEvent.button == SDL_BUTTON_RIGHT)
-                {
-                    m_simulationWorld.createExplosion(mouseEvent.x, mouseEvent.y);
-                }
+        handleSDLEvent(event);
+    }
+}
 
-                break;
-            }
-            case SDL_EVENT_MOUSE_BUTTON_UP:
-                m_mouseMotionActive = false;
-                break;
-            case SDL_EVENT_MOUSE_MOTION:
+void ssWindow::handleSDLEvent(const SDL_Event& event)
+{
+    const auto eventType = event.type;
+    switch (eventType)
+    {
+        case SDL_EVENT_QUIT:
+            m_running = false;
+            break;
+        case SDL_EVENT_KEY_DOWN:
+            handleSDLKeyDown(event.key);
+            break;
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        {
+            const auto mouseEvent = event.button;
+            if (mouseEvent.button == SDL_BUTTON_LEFT)
             {
-                const auto mouseMotionEvent = event.motion;
-                handleSDLMouseMotion(mouseMotionEvent);
-                break;
+                m_mouseMotionActive = true;
+                handleSDLMouseMotion(event.motion);
             }
-            default:
-                break;
+            else if (mouseEvent.button == SDL_BUTTON_RIGHT)
+            {
+                m_simulationWorld.createExplosion(mouseEvent.x, mouseEvent.y);
+            }
+
+            break;
         }
+        case SDL_EVENT_MOUSE_BUTTON_UP:
+            m_mouseMotionActive = false;
+            break;
+        case SDL_EVENT_MOUSE_MOTION:
+        {
+            const auto mouseMotionEvent = event.motion;
+            handleSDLMouseMotion(mouseMotionEvent);
+            break;
+        }
+        default:
+            break;
     }
 }
 

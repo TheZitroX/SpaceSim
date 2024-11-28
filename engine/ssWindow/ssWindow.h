@@ -47,6 +47,7 @@ private:
     void update(float deltaTime = 0);
 
     void handleSDLEvents();
+    void handleSDLEvent(const SDL_Event& event);
     void handleSDLKeyDown(const SDL_KeyboardEvent& key);
 
 
