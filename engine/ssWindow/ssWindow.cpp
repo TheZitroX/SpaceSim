@@ -103,12 +103,12 @@ void ssWindow::run()
 
 void ssWindow::draw()
 {
+    SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
+    SDL_RenderClear(m_rendererPtr);
+
     ImGui_ImplSDL3_NewFrame();
     ImGui_ImplSDLRenderer3_NewFrame();
     ImGui::NewFrame();
-    ImGui::Begin("Hello, ImGui!");
-    ImGui::Text("This is some text.");
-    ImGui::End();
 
     ImGui::ShowDemoWindow();
 
@@ -117,21 +117,12 @@ void ssWindow::draw()
     std::string text = std::format("FPS: {:.0f}", ImGui::GetIO().Framerate);
     drawList->AddText({0, 0}, IM_COL32(255, 255, 0, 255), text.c_str());
 
-    ImGui::Render();
-
-    SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
-    SDL_RenderClear(m_rendererPtr);
-
-//    SDL_FRect rect = {100, 100, 100, 100};
-//    SDL_SetRenderDrawColor(m_rendererPtr, 255, 0, 255, 255);
-//    SDL_RenderFillRect(m_rendererPtr, &rect);
+    m_simulationWorld.renderImGui();
 
     m_simulationWorld.debugDraw();
 
+    ImGui::Render();
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_rendererPtr);
-    //drawMouseMotion();
-    //drawFPS();
-
     SDL_RenderPresent(m_rendererPtr);
 }
 

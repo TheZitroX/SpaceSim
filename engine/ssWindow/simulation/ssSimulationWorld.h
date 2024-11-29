@@ -25,6 +25,7 @@ public:
     void addHundredRectsScreenToWorld(float x, float y, float width, float height, float dx, float dy);
     void addRectScreenToWorld(float x, float y, float width, float height);
     void createExplosion(float x, float y);
+    void renderImGui();
 private:
     b2WorldId m_worldId{};
     b2BodyId  m_bodyId{};

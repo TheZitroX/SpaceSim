@@ -4,6 +4,8 @@
 
 #include <box2d/box2d.h>
 #include <iostream>
+#include <imgui.h>
+
 #include "ssSimulationWorld.h"
 #include "ssSWDebugDraw.h"
 
@@ -197,4 +199,48 @@ void ssSimulationWorld::createExplosion(float x, float y)
     explosionDef.falloff          = 300.0f;
 
     b2World_Explode(m_worldId, &explosionDef);
+}
+
+void addTableRow(const char* name, const char* value)
+{
+    ImGui::TableNextRow();
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", name);
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", value);
+}
+
+void ssSimulationWorld::renderImGui()
+{
+    ImGui::Begin("Info");
+
+    if (ImGui::Button("Add 100 rects"))
+    {
+        addHundredRectsScreenToWorld(100, 100, 10, 10);
+    }
+
+    if (ImGui::Button("Add 1 rect"))
+    {
+        addRectScreenToWorld(100, 100, 10, 10);
+    }
+
+    // info about the world
+    const auto worldCounters = b2World_GetCounters(m_worldId);
+
+    // table
+    ImGui::BeginTable("WorldCounters", 2);
+    ImGui::TableSetupColumn("Name");
+    ImGui::TableSetupColumn("Value");
+    ImGui::TableHeadersRow();
+    addTableRow("Body count", std::to_string(worldCounters.bodyCount).c_str());
+    addTableRow("Shape count", std::to_string(worldCounters.shapeCount).c_str());
+    addTableRow("Contact count", std::to_string(worldCounters.contactCount).c_str());
+    addTableRow("Joint count", std::to_string(worldCounters.jointCount).c_str());
+    addTableRow("Island count", std::to_string(worldCounters.islandCount).c_str());
+    addTableRow("Static tree height", std::to_string(worldCounters.staticTreeHeight).c_str());
+    addTableRow("Byte count", std::to_string(worldCounters.byteCount).c_str());
+    addTableRow("Task count", std::to_string(worldCounters.taskCount).c_str());
+    ImGui::EndTable();
+
+    ImGui::End();
 }
