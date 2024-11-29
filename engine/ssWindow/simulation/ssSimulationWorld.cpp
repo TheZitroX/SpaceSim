@@ -214,11 +214,6 @@ void ssSimulationWorld::renderImGui()
 {
     ImGui::Begin("Info");
 
-    if (ImGui::Button("Add 100 rects"))
-    {
-        addHundredRectsScreenToWorld(100, 100, 10, 10);
-    }
-
     if (ImGui::Button("Add 1 rect"))
     {
         addRectScreenToWorld(100, 100, 10, 10);
