@@ -44,7 +44,10 @@ ssWindow::ssWindow()
         std::cerr << "SDL_CreateRenderer failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
+    SDL_SetRenderDrawColor(m_rendererPtr, 0, 0, 0, 255);
     SDL_SetRenderDrawBlendMode(m_rendererPtr, SDL_BLENDMODE_BLEND);
+    SDL_RenderClear(m_rendererPtr);
+    SDL_RenderPresent(m_rendererPtr);
 
     m_simulationWorld.setRenderer(m_rendererPtr);
 }

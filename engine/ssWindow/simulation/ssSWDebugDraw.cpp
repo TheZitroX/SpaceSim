@@ -32,8 +32,9 @@ void ssSWDebugDraw::DrawSolidPolygon(b2Transform transform, const b2Vec2* pVerti
     assert(self != nullptr);
 
     const SDL_Color LineColor     = ToSDLColor(rColor);
+
     SDL_FColor      TriangleColor = ToSDLFColor(ToSDLColor(rColor));
-    TriangleColor.a = 128;
+    TriangleColor.a = 0.5f;
 
     std::vector<SDL_Vertex> vecVertices;
     for (int32_t            i = 0; i < VertexCount; ++i)
