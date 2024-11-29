@@ -58,4 +58,8 @@ private:
     void drawFPS();
 
     ssSimulationWorld m_simulationWorld{};
+
+    Uint8* m_wavBuffer = nullptr;
+    Uint32 m_wavLength = 0;
+    SDL_AudioStream* m_audioStream = nullptr;
 };

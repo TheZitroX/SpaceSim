@@ -11,6 +11,7 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+#include <SDL3/SDL_audio.h>
 
 ssWindow::ssWindow()
 {
@@ -25,6 +26,30 @@ ssWindow::ssWindow()
         std::cerr << "TTF_Init failed: " << SDL_GetError() << std::endl;
         exit(1);
     }
+
+    if (!SDL_Init(SDL_INIT_AUDIO)) {
+        SDL_Log("Fehler beim Initialisieren von SDL Audio: %s", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_AudioSpec wavSpec;
+
+    if (!SDL_LoadWAV("assets/block_hit_block.wav", &wavSpec, &m_wavBuffer, &m_wavLength)) {
+        SDL_Log("Fehler beim Laden der WAV-Datei: %s", SDL_GetError());
+        exit(1);
+    }
+
+    m_audioStream = SDL_OpenAudioDeviceStream(
+        SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,
+        &wavSpec,
+        nullptr,
+        nullptr
+    );
+    if (!m_audioStream) {
+        SDL_Log("Fehler beim Erstellen des Audio-Streams: %s", SDL_GetError());
+        exit(1);
+    }
+    SDL_ResumeAudioStreamDevice(m_audioStream);
 
     m_isFullscreen = false;
     m_windowPtr    = SDL_CreateWindow(
@@ -63,6 +88,9 @@ ssWindow::ssWindow()
 
 ssWindow::~ssWindow()
 {
+    SDL_free(m_wavBuffer);
+    m_wavBuffer = nullptr;
+
     if (m_renderThread.joinable())
         m_renderThread.join();
 
@@ -128,6 +156,18 @@ void ssWindow::draw()
 
 void ssWindow::update(const float deltaTime)
 {
+    const auto audioSteamAvaliableLength = SDL_GetAudioStreamAvailable(m_audioStream);
+    if (audioSteamAvaliableLength == -1) {
+        SDL_Log("Fehler beim Abrufen der verfügbaren Länge des Audio-Streams: %s", SDL_GetError());
+        SDL_ClearError();
+    } else if (audioSteamAvaliableLength < (int)m_wavLength) {
+        /* feed more data to the stream. It will queue at the end, and trickle out as the hardware needs more data. */
+        if (!SDL_PutAudioStreamData(m_audioStream, m_wavBuffer, (int)m_wavLength)) {
+            SDL_Log("Fehler beim Hinzufügen von Daten zum Audio-Stream: %s", SDL_GetError());
+            SDL_ClearError();
+        }
+    }
+
     const auto timeStep = deltaTime > 1.0f / 60.0f ? 1.0f / 60.0f : deltaTime;
     m_simulationWorld.step(timeStep, 4);
 }
