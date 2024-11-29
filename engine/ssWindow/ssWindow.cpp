@@ -178,6 +178,12 @@ void ssWindow::handleSDLEvents()
 
     while (SDL_PollEvent(&event))
     {
+        if (event.type == SDL_EVENT_QUIT)
+        {
+            m_running = false;
+            break;
+        }
+
         ImGui_ImplSDL3_ProcessEvent(&event);
 
         const ImGuiIO& io = ImGui::GetIO();
@@ -193,9 +199,6 @@ void ssWindow::handleSDLEvent(const SDL_Event& event)
     const auto eventType = event.type;
     switch (eventType)
     {
-        case SDL_EVENT_QUIT:
-            m_running = false;
-            break;
         case SDL_EVENT_KEY_DOWN:
             handleSDLKeyDown(event.key);
             break;
