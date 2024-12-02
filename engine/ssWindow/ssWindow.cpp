@@ -156,18 +156,6 @@ void ssWindow::draw()
 
 void ssWindow::update(const float deltaTime)
 {
-    const auto audioSteamAvaliableLength = SDL_GetAudioStreamAvailable(m_audioStream);
-    if (audioSteamAvaliableLength == -1) {
-        SDL_Log("Fehler beim Abrufen der verfügbaren Länge des Audio-Streams: %s", SDL_GetError());
-        SDL_ClearError();
-    } else if (audioSteamAvaliableLength < (int)m_wavLength) {
-        /* feed more data to the stream. It will queue at the end, and trickle out as the hardware needs more data. */
-        if (!SDL_PutAudioStreamData(m_audioStream, m_wavBuffer, (int)m_wavLength)) {
-            SDL_Log("Fehler beim Hinzufügen von Daten zum Audio-Stream: %s", SDL_GetError());
-            SDL_ClearError();
-        }
-    }
-
     const auto timeStep = deltaTime > 1.0f / 60.0f ? 1.0f / 60.0f : deltaTime;
     m_simulationWorld.step(timeStep, 4);
 }
