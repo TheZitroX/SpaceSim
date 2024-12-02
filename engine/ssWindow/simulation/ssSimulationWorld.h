@@ -32,4 +32,6 @@ private:
 
     ssSWDebugDraw* m_debugDraw{};
     void addRect(float x, float y, float width, float height);
+    void addCollapsingHeaderInfo();
+    void addCollapsingHeaderSimulation();
 };

@@ -201,6 +201,17 @@ void ssSimulationWorld::createExplosion(float x, float y)
     b2World_Explode(m_worldId, &explosionDef);
 }
 
+void ssSimulationWorld::renderImGui()
+{
+    ImGui::Begin("SpaceSim Menu");
+
+    addCollapsingHeaderSimulation();
+
+    addCollapsingHeaderInfo();
+
+    ImGui::End();
+}
+
 void addTableRow(const char* name, const char* value)
 {
     ImGui::TableNextRow();
@@ -210,14 +221,27 @@ void addTableRow(const char* name, const char* value)
     ImGui::Text("%s", value);
 }
 
-void ssSimulationWorld::renderImGui()
+void ssSimulationWorld::addCollapsingHeaderSimulation()
 {
-    ImGui::Begin("Info");
+    if (!ImGui::CollapsingHeader("Simulation"))
+        return;
 
-    if (ImGui::Button("Add 1 rect"))
+    static float timeStep = 1.0f / 60.0f;
+    ImGui::SliderFloat("Time step", &timeStep, 0.0f, 10.0f);
+
+    static int subStepCount = 4;
+    ImGui::SliderInt("Substep count", &subStepCount, 1, 50);
+
+    if (ImGui::Button("Step"))
     {
-        addRectScreenToWorld(100, 100, 10, 10);
+        step(timeStep, subStepCount);
     }
+}
+
+void ssSimulationWorld::addCollapsingHeaderInfo()
+{
+    if (!ImGui::CollapsingHeader("Info"))
+        return;
 
     // info about the world
     const auto worldCounters = b2World_GetCounters(m_worldId);
@@ -236,6 +260,5 @@ void ssSimulationWorld::renderImGui()
     addTableRow("Byte count", std::to_string(worldCounters.byteCount).c_str());
     addTableRow("Task count", std::to_string(worldCounters.taskCount).c_str());
     ImGui::EndTable();
-
-    ImGui::End();
 }
+
