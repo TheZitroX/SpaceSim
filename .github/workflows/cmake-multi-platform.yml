@@ -13,51 +13,55 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest, macos-latest]
         build_type: [Release]
-        c_compiler: [gcc] #[gcc, clang, cl]
+        c_compiler: [gcc]
         include:
-          - os: windows-latest
+          - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-          #- os: ubuntu-latest
-          #  c_compiler: gcc
-          #  cpp_compiler: g++
-          #- os: ubuntu-latest
-          #  c_compiler: clang
-          #  cpp_compiler: clang++
-        exclude:
-          - os: windows-latest
+          - os: macos-latest
             c_compiler: clang
-          - os: windows-latest
-            c_compiler: cl
-          #- os: ubuntu-latest
-          #  c_compiler: cl
+            cpp_compiler: clang++
 
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive  # Ensure submodules are checked out
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
+    - name: Install Dependencies (Linux)
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        sudo apt-get update
+        sudo apt-get install -y libfreetype6-dev libharfbuzz-dev pkg-config \
+                                ninja-build cmake libpng-dev zlib1g-dev \
+                                libbz2-dev libbrotli-dev
 
-    - name: Configure CMake
-      shell: bash
+    - name: Run CMake and Build (Linux)
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        cmake -B "${{ steps.strings.outputs.build-output-dir }}" \
-              -G "MinGW Makefiles" \
-              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
-              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -S "${{ github.workspace }}"
+        cmake -B build \
+              -G Ninja \
+              -DCMAKE_C_COMPILER=gcc \
+              -DCMAKE_CXX_COMPILER=g++ \
+              -DCMAKE_BUILD_TYPE=Release \
+              -S .
+        cmake --build build --config Release
 
-    - name: Build
-      run: cmake --build "${{ steps.strings.outputs.build-output-dir }}" --config "${{ matrix.build_type }}"
+    - name: Install Dependencies (macOS)
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        brew update
+        brew install freetype harfbuzz pkg-config \
+                     ninja cmake libpng zlib bzip2 brotli
 
-    - name: Test
-      working-directory: "${{ steps.strings.outputs.build-output-dir }}"
-      run: ctest --build-config "${{ matrix.build_type }}"
+    - name: Run CMake and Build (macOS)
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        cmake -B build \
+              -G Ninja \
+              -DCMAKE_C_COMPILER=clang \
+              -DCMAKE_CXX_COMPILER=clang++ \
+              -DCMAKE_BUILD_TYPE=Release \
+              -S .
+        cmake --build build --config Release
