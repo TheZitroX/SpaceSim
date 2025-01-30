@@ -51,12 +51,13 @@ ssWindow::ssWindow()
     }
     SDL_ResumeAudioStreamDevice(m_audioStream);
 
-    m_isFullscreen = false;
+    m_isFullscreen = true;
     m_windowPtr    = SDL_CreateWindow(
         "Hello, SDL3!",
         1280,
         720,
         SDL_WINDOW_RESIZABLE
+        | SDL_WINDOW_HIDDEN
         | SDL_WINDOW_FULLSCREEN
     );
     if (!m_windowPtr)
@@ -84,6 +85,8 @@ ssWindow::ssWindow()
     ImGui::StyleColorsDark();
     ImGui_ImplSDL3_InitForSDLRenderer(m_windowPtr, m_rendererPtr);
     ImGui_ImplSDLRenderer3_Init(m_rendererPtr);
+
+    SDL_ShowWindow(m_windowPtr);
 }
 
 ssWindow::~ssWindow()
