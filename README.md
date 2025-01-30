@@ -1,6 +1,6 @@
 # SpaceSim
 
-SpaceSim is a 2D space simulation game developed in C++ using SDL3. The game aims to provide an immersive space experience with clickable graphics, shaders, and realistic physics.
+SpaceSim is a 2D space penis simulation game developed in C++ using SDL3. The game aims to provide an immersive space experience with clickable graphics, shaders, and realistic physics.
 
 ## Features
 
