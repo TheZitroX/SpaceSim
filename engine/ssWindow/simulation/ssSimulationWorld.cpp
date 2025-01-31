@@ -17,7 +17,7 @@ ssSimulationWorld::ssSimulationWorld()
 {
     auto worldDefinition = b2DefaultWorldDef();
     worldDefinition.gravity.y             = GRAVITY;
-    worldDefinition.maximumLinearVelocity = 400.0f * b2GetLengthUnitsPerMeter() * 100.0f;
+    worldDefinition.maximumLinearSpeed = 400.0f * b2GetLengthUnitsPerMeter() * 100.0f;
     worldDefinition.restitutionThreshold  = 0.0f;
     m_worldId = b2CreateWorld(&worldDefinition);
 
